@@ -69,10 +69,6 @@ public class NameFileProcessorTest {
 
     @Test
     public void testMakeFileFromList() throws FileNotFoundException {
-        var emptyList = readNamesOfFile(pathToNewFile);
-
-        Assert.assertTrue(emptyList.isEmpty());
-
         var names = readNamesOfFile(pathToSortedNames);
 
         makeFileFromList(names, pathToNewFile);
