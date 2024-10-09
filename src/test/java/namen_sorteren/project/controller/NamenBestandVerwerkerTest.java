@@ -57,7 +57,7 @@ public class NamenBestandVerwerkerTest {
     public void testVoegLijstToeAanGesorteerdeLijst() {
         var names = leesNamenBestand(pathToSortedNames);
 
-        VoegLijstToeAanGesorteerdeLijst(new ArrayList<>(Arrays.asList("Hans","Peter")), names);
+        voegLijstToeAanGesorteerdeLijst(new ArrayList<>(Arrays.asList("Hans","Peter")), names);
 
         Assert.assertTrue(names.contains("Hans"));
         Assert.assertTrue(names.contains("Peter"));

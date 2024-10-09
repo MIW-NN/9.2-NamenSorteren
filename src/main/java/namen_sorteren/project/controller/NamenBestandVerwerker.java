@@ -15,7 +15,7 @@ public class NamenBestandVerwerker {
     public static void voegNaamToeAanGesorteerdeLijst(String name, ArrayList<String> list) {
     }
 
-    public static void VoegLijstToeAanGesorteerdeLijst(ArrayList<String> newList, ArrayList<String> oldList) {
+    public static void voegLijstToeAanGesorteerdeLijst(ArrayList<String> newList, ArrayList<String> oldList) {
     }
 
     public static void maakBestandVanLijst(ArrayList<String> list, String fileName) {
