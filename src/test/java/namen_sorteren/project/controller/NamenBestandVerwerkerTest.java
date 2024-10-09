@@ -1,20 +1,19 @@
 package namen_sorteren.project.controller;
 
 
-import static namen_sorteren.project.controller.NameFileProcessor.*;
+import static namen_sorteren.project.controller.NamenBestandVerwerker.*;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NameFileProcessorTest {
+public class NamenBestandVerwerkerTest {
     private final static String NAME_FILE_OLD = "9.2 GesorteerdeNamenOrigineel.txt";
     private final static String NAME_FILE_EXTRA = "9.2 ExtraNamen.txt";
     private final static String NAME_FILE_NEW = "9.2 GesorteerdeNamenNieuw.txt";
@@ -24,42 +23,41 @@ public class NameFileProcessorTest {
     private String pathToNewFile;
 
     @Before
-    public void setPath()  throws URISyntaxException{
+    public void setPath() throws URISyntaxException{
         var classloader = Thread.currentThread().getContextClassLoader();
         pathToExtraNames = classloader.getResource(NAME_FILE_EXTRA).toURI().getPath();
         pathToSortedNames = classloader.getResource(NAME_FILE_OLD).toURI().getPath();
         pathToNewFile= classloader.getResource(NAME_FILE_NEW).toURI().getPath();
     }
 
-
     @Test
-    public void testCountNamesInFile() {
-        Assert.assertEquals(17,countNamesInFile(pathToExtraNames));
+    public void testTelNamenBestand() {
+        Assert.assertEquals(17, telNamenBestand(pathToExtraNames));
     }
 
     @Test
-    public void testReadNamesOfFile() {
-        var names = readNamesOfFile(pathToExtraNames);
+    public void testLeesNamenBestand() {
+        var names = leesNamenBestand(pathToExtraNames);
 
         Assert.assertEquals(17,names.size());
         Assert.assertTrue(names.contains("Ted"));
     }
 
     @Test
-    public void testAddNameToSortedList() {
-        var names = readNamesOfFile(pathToSortedNames);
+    public void testVoegNaamToeAanGesorteerdeLijst() {
+        var names = leesNamenBestand(pathToSortedNames);
 
-        AddNameToSortedList("Hans", names);
+        voegNaamToeAanGesorteerdeLijst("Hans", names);
 
         Assert.assertTrue(names.contains("Hans"));
         Assert.assertEquals("Hans", names.get(3));
     }
 
     @Test
-    public void testAddListToSortedList() {
-        var names = readNamesOfFile(pathToSortedNames);
+    public void testVoegLijstToeAanGesorteerdeLijst() {
+        var names = leesNamenBestand(pathToSortedNames);
 
-        addListToSortedList(new ArrayList<>(Arrays.asList("Hans","Peter")), names);
+        VoegLijstToeAanGesorteerdeLijst(new ArrayList<>(Arrays.asList("Hans","Peter")), names);
 
         Assert.assertTrue(names.contains("Hans"));
         Assert.assertTrue(names.contains("Peter"));
@@ -68,12 +66,12 @@ public class NameFileProcessorTest {
     }
 
     @Test
-    public void testMakeFileFromList() throws FileNotFoundException {
-        var names = readNamesOfFile(pathToSortedNames);
+    public void testMaakBestandVanLijst() throws FileNotFoundException {
+        var names = leesNamenBestand(pathToSortedNames);
 
-        makeFileFromList(names, pathToNewFile);
+        maakBestandVanLijst(names, pathToNewFile);
 
-        var newNames = readNamesOfFile(pathToNewFile);
+        var newNames = leesNamenBestand(pathToNewFile);
         Assert.assertFalse(newNames.isEmpty());
         Assert.assertEquals(9, newNames.size());
         Assert.assertEquals("Mark", newNames.get(5));
