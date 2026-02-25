@@ -6,12 +6,12 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class NameFileProcessor {
+public class NamenBestandVerwerker {
 
-    public static int countNamesInFile(String fileName) {
+    public static int telNamenBestand(String bestandsnaam) {
         int nameCounter = 0;
         try {
-            File file = new File(fileName);
+            File file = new File(bestandsnaam);
             Scanner readFile = new Scanner(file);
             while (readFile.hasNext()) {
                 readFile.next();
@@ -23,10 +23,10 @@ public class NameFileProcessor {
         return nameCounter;
     }
 
-    public static ArrayList<String> readNamesOfFile(String fileName) {
+    public static ArrayList<String> leesNamenBestand(String bestandsnaam) {
         ArrayList<String> nameList = new ArrayList<>();
         try {
-            File file = new File(fileName);
+            File file = new File(bestandsnaam);
             Scanner readFile = new Scanner(file);
             while (readFile.hasNext()) {
                 nameList.add(readFile.next());
@@ -37,29 +37,29 @@ public class NameFileProcessor {
         return nameList;
     }
 
-    public static void AddNameToSortedList(String name, ArrayList<String> list) {
+    public static void voegNaamToeAanGesorteerdeLijst(String naam, ArrayList<String> lijst) {
         int index = 0;
-        while (name.compareTo(list.get(index)) > 0) {
+        while (naam.compareTo(lijst.get(index)) > 0) {
             index++;
-            if (index >= list.size()) {
-                list.add(name);
+            if (index >= lijst.size()) {
+                lijst.add(naam);
                 return;
             }
         }
-        list.add(index, name);
+        lijst.add(index, naam);
     }
 
-    public static void addListToSortedList(ArrayList<String> newList, ArrayList<String> oldList) {
-        for (String name : newList) {
-            AddNameToSortedList(name, oldList);
+    public static void voegLijstToeAanGesorteerdeLijst(ArrayList<String> nieuweLijst, ArrayList<String> oudeLijst) {
+        for (String naam : nieuweLijst) {
+            voegNaamToeAanGesorteerdeLijst(naam, oudeLijst);
         }
     }
 
-    public static void makeFileFromList(ArrayList<String> list, String fileName) {
+    public static void maakBestandVanLijst(ArrayList<String> lijst, String bestandsnaam) {
         try {
-            PrintWriter printWriter = new PrintWriter(fileName);
-            for (String name : list) {
-                printWriter.println(name);
+            PrintWriter printWriter = new PrintWriter(bestandsnaam);
+            for (String naam : lijst) {
+                printWriter.println(naam);
             }
             printWriter.close();
         } catch (Exception Exception) {
