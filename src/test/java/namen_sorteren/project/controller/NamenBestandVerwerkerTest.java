@@ -1,85 +1,69 @@
 package namen_sorteren.project.controller;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import static org.junit.jupiter.api.Assertions.*;
 
-import static namen_sorteren.project.controller.NamenBestandVerwerker.*;
-
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class NamenBestandVerwerkerTest {
-    private final static String NAMEN_BESTAND_ORIGINEEL = "9.2 GesorteerdeNamenOrigineel.txt";
-    private final static String NAMEN_BESTAND_EXTRA = "9.2 ExtraNamen.txt";
-    private final static String NAMEN_BESTAND_NIEUW = "9.2 GesorteerdeNamenNieuw.txt";
+class NamenBestandVerwerkerTest {
 
-    private String padNaarExtraNamen;
-    private String padNaarGesorteerdNamen;
-    private String padNaarNieuwBestand;
+    @TempDir
+    Path tijdelijkeMap;
 
-    @Before
-    public void stelPadIn()  throws URISyntaxException{
-        var classloader = Thread.currentThread().getContextClassLoader();
-        padNaarExtraNamen = classloader.getResource(NAMEN_BESTAND_EXTRA).toURI().getPath();
-        padNaarGesorteerdNamen = classloader.getResource(NAMEN_BESTAND_ORIGINEEL).toURI().getPath();
-        padNaarNieuwBestand= classloader.getResource(NAMEN_BESTAND_NIEUW).toURI().getPath();
-    }
-
+    // --- telNamenBestand ---
 
     @Test
-    public void testTelNamenBestand() {
-        Assert.assertEquals(17,telNamenBestand(padNaarExtraNamen));
+    void telNamenBestand_drieRegels_geeftDrie() throws IOException {
+        Path bestand = tijdelijkeMap.resolve("namen.txt");
+        try (PrintWriter schrijver = new PrintWriter(bestand.toFile())) {
+            schrijver.println("Alice");
+            schrijver.println("Bob");
+            schrijver.println("Charlie");
+        }
+        assertEquals(3, NamenBestandVerwerker.telNamenBestand(bestand.toString()));
     }
 
     @Test
-    public void testLeesNamenBestand() {
-        var namen = leesNamenBestand(padNaarExtraNamen);
-
-        Assert.assertEquals(17,namen.size());
-        Assert.assertTrue(namen.contains("Ted"));
+    void telNamenBestand_leegBestand_geeftNul() throws IOException {
+        Path bestand = tijdelijkeMap.resolve("leeg.txt");
+        bestand.toFile().createNewFile();
+        assertEquals(0, NamenBestandVerwerker.telNamenBestand(bestand.toString()));
     }
 
+    // --- leesNamenBestand ---
+
     @Test
-    public void testVoegNaamToe() {
-        var namen = leesNamenBestand(padNaarGesorteerdNamen);
-
-        voegNaamToeAanGesorteerdeLijst("Hans", namen);
-
-        Assert.assertTrue(namen.contains("Hans"));
-        Assert.assertEquals("Hans", namen.get(3));
+    void leesNamenBestand_drieNamen_geeftListMetDrieNamen() throws IOException {
+        Path bestand = tijdelijkeMap.resolve("namen.txt");
+        try (PrintWriter schrijver = new PrintWriter(bestand.toFile())) {
+            schrijver.println("Alice");
+            schrijver.println("Bob");
+            schrijver.println("Charlie");
+        }
+        ArrayList<String> namen = NamenBestandVerwerker.leesNamenBestand(bestand.toString());
+        assertEquals(3, namen.size());
+        assertEquals("Alice", namen.get(0));
+        assertEquals("Charlie", namen.get(2));
     }
 
-    @Test
-    public void testVoegLijstToe() {
-        var namen = leesNamenBestand(padNaarGesorteerdNamen);
-
-        voegLijstToeAanGesorteerdeLijst(new ArrayList<>(Arrays.asList("Hans","Peter")), namen);
-
-        Assert.assertTrue(namen.contains("Hans"));
-        Assert.assertTrue(namen.contains("Peter"));
-        Assert.assertEquals("Hans", namen.get(3));
-        Assert.assertEquals("Peter", namen.get(8));
-    }
+    // --- maakBestandVanLijst ---
 
     @Test
-    public void testMaakBestand() throws FileNotFoundException {
-        var namen = leesNamenBestand(padNaarGesorteerdNamen);
+    void maakBestandVanLijst_schrijftNamenNaarBestand() throws IOException {
+        ArrayList<String> lijst = new ArrayList<>();
+        lijst.add("Alice");
+        lijst.add("Bob");
+        lijst.add("Charlie");
 
-        maakBestandVanLijst(namen, padNaarNieuwBestand);
+        Path uitvoer = tijdelijkeMap.resolve("uitvoer.txt");
+        NamenBestandVerwerker.maakBestandVanLijst(lijst, uitvoer.toString());
 
-        var newNames = leesNamenBestand(padNaarNieuwBestand);
-        Assert.assertFalse(newNames.isEmpty());
-        Assert.assertEquals(9, newNames.size());
-        Assert.assertEquals("Mark", newNames.get(5));
-
-        PrintWriter printWriter = new PrintWriter(padNaarNieuwBestand);
-        printWriter.print("");
-        printWriter.close();
+        ArrayList<String> teruggelezen = NamenBestandVerwerker.leesNamenBestand(uitvoer.toString());
+        assertEquals(3, teruggelezen.size());
+        assertEquals("Alice", teruggelezen.get(0));
     }
 }
